@@ -2,7 +2,8 @@ import {useState} from 'react';
 
 import {createAuthUserWithEmailAndPassword, createUserDocumetFromAuth} from '../../utils/firebase/firebase.utils';
 import FormInput from '../form-input/form-input.component';
-
+import './sign-up-form.styles.scss';
+import Button from '../button/button.component';
 /* steps to setup sign-in form
     step 1- create functional component 'signinForm' and return a div with the form
     step 2- prepare onChange tag on each input field to track when the input in a field changes
@@ -21,7 +22,7 @@ const defaultFormFields = {
     confirmPassword: '' 
 }
 
-const SigninForm = () => {
+const SignUpForm = () => {
 
     const [formFields, setFormFields] = useState(defaultFormFields);
     const {displayName, email, password, confirmPassword} = formFields; 
@@ -62,20 +63,22 @@ const SigninForm = () => {
         setFormFields({...formFields, [name]: value})      //spreads-in all 'formFields' object properties(key-value pairs) with their state values, and set the value of the input that triggerd the event(the name that matches with the 'name' tag). 
     } 
     return(
-        <div>
+        <div className='sign-up-container'>
+            <h2>Don't have an account?</h2>
+            <span>Sign up with your email and password</span>
             <form onSubmit={handleSubmit}>
-                <FormInput label= 'Display Name' inputOptions = {{type:'text', required: true, onChange:handleChange, name:'displayName', value:displayName}} />
+                <FormInput label= 'Display Name' inputOptions= {{type:'text', required: true, onChange:handleChange, name:'displayName', value:displayName}} />
                 
-                <FormInput label= 'Email' inputOptions = {{type:'text', required: true, onChange:handleChange, name:'email', value:email}}/>
+                <FormInput label= 'Email' inputOptions= {{type:'text', required: true, onChange:handleChange, name:'email', value:email}}/>
                 
-                <FormInput label= 'Password' inputOptions = {{type:'text', required: true, onChange:handleChange, name:'password', value:password}}/>
+                <FormInput label= 'Password' inputOptions= {{type:'text', required: true, onChange:handleChange, name:'password', value:password}}/>
                 
-                <FormInput label= 'Confirm Password' inputOptions = {{type:'text', required: true, onChange:handleChange, name:'confirmPassword', value:confirmPassword}}/>
+                <FormInput label= 'Confirm Password' inputOptions= {{type:'text', required: true, onChange:handleChange, name:'confirmPassword', value:confirmPassword}}/>
 
-                <button>Submit</button>
+                <Button type= 'submit' buttonType=''>SIGN UP</Button>
             </form>
         </div>
     )
 }
 
-export default SigninForm;
+export default SignUpForm;
