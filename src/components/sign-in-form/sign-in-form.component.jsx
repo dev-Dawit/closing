@@ -1,8 +1,8 @@
 import {useState} from 'react';
 
-import {createAuthUserWithEmailAndPassword, createUserDocumetFromAuth} from '../../utils/firebase/firebase.utils';
+import {signInWithGooglePopup, createUserDocumetFromAuth, signInAuthWithEmailAndPassword} from '../../utils/firebase/firebase.utils';
 import FormInput from '../form-input/form-input.component';
-import './sign-up-form.styles.scss';
+import './sign-in-form.styles.scss';
 import Button from '../button/button.component';
 /* steps to setup sign-in form
     step 1- create functional component 'signinForm' and return a div with the form
@@ -15,48 +15,53 @@ import Button from '../button/button.component';
     step 8- spread other inputs that did not trigger an event(the field the user is not typing on) and only set the field that triggerd the event to store that value in the state 'formFields' 
     setp 9- make the value of the a particular field 'value' tag, value of that particular field from the state 'formFields'. this will make the value of that input equal to the value of the state
 */
-const defaultFormFields = {
-    displayName: '',
+const defaultFormFields = 
+{
     email: '',
     password: '',
-    confirmPassword: '' 
 }
 
-const SignUpForm = () => {
+const SignInForm = () => {
 
     const [formFields, setFormFields] = useState(defaultFormFields);
-    const {displayName, email, password, confirmPassword} = formFields; 
+    const { email, password } = formFields; 
 
     const resetFormFields = () => {
         setFormFields(defaultFormFields);
     }
 
+    const signInWithGoogle = async () => {
+        const {user} = await signInWithGooglePopup();  //Poping up sign in with Google on our sign-in page.then destructuring 'user' property from the response obj we got from signInWithPopup b/c that is the only property we care abt
+        await createUserDocumetFromAuth(user);  //storing the Authenticated user in firestore db 
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if(password !== confirmPassword) {
-            alert("passwords do not much");    
-            return;
-        };
         
-        //creating/storing the user in firestore
+        //retrieve user from firestore
         try{
-            const {user} = await createAuthUserWithEmailAndPassword(email, password)
-            console.log(user);
-            await createUserDocumetFromAuth(user, {displayName});
+            const response = await signInAuthWithEmailAndPassword(email, password);
+            console.log(response)
             resetFormFields();
-
         }
         catch(error){
-            if(error.code == 'auth/email-already-in-use'){
-                alert('cannot create user, email already in use')
-            }
-            console.log('user creation encountered an error', error)
-           
+           switch(error.code){
+                case 'auth/wrong-password':
+                    alert('wrong password');
+                    break;
+                
+                case 'auth/user-not-found':
+                    alert('No user signed with this email')
+                    break;
+                
+                default:
+                    console.log(error);
+           }
         }
 
     }
 
-    //console.log(formFields)
+    //handles changes on the input fields
     const handleChange = (event) => {
         const {name, value} = event.target;
 
@@ -64,21 +69,22 @@ const SignUpForm = () => {
     } 
     return(
         <div className='sign-up-container'>
-            <h2>Don't have an account?</h2>
-            <span>Sign up with your email and password</span>
+            <h2>Already have an account?</h2>
+            <span>Sign In with your email and password</span>
             <form onSubmit={handleSubmit}>
-                <FormInput label= 'Display Name' inputOptions= {{type:'text', required: true, onChange:handleChange, name:'displayName', value:displayName}} />
                 
                 <FormInput label= 'Email' inputOptions= {{type:'text', required: true, onChange:handleChange, name:'email', value:email}}/>
                 
                 <FormInput label= 'Password' inputOptions= {{type:'password', required: true, onChange:handleChange, name:'password', value:password}}/>
                 
-                <FormInput label= 'Confirm Password' inputOptions= {{type:'password', required: true, onChange:handleChange, name:'confirmPassword', value:confirmPassword}}/>
-
-                <Button type= 'submit' buttonType=''>SIGN UP</Button>
+                <div className='buttons-container'>
+                    <Button type= 'submit' buttonType=''>SIGN IN</Button>
+                    <Button type='button' buttonType= 'google' onClick={signInWithGoogle}>GOOGLE SIGN IN</Button>
+                </div>
+                
             </form>
         </div>
     )
 }
 
-export default SignUpForm;
+export default SignInForm;
