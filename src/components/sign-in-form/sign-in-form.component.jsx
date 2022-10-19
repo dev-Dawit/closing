@@ -1,20 +1,14 @@
-import {useState} from 'react';
+import { useState, useContext} from 'react';
 
 import {signInWithGooglePopup, createUserDocumetFromAuth, signInAuthWithEmailAndPassword} from '../../utils/firebase/firebase.utils';
 import FormInput from '../form-input/form-input.component';
-import './sign-in-form.styles.scss';
 import Button from '../button/button.component';
-/* steps to setup sign-in form
-    step 1- create functional component 'signinForm' and return a div with the form
-    step 2- prepare onChange tag on each input field to track when the input in a field changes
-    step 3- create a an object to hold all states as a group 'defaultFormFields' and initialize it with empty strings
-    step 4- use 'useState' react function to store the input typed in the fields and initialize it with 'defaultFormFields'
-    step 5- create a function 'handleChange' which sets the input fields with the value the user types 
-    step 6- create 'name' and 'value' tags to distigush the fields and know which field is firing onChange event   
-    step 7- distructure the 'name' and 'value' from the event of onChange method
-    step 8- spread other inputs that did not trigger an event(the field the user is not typing on) and only set the field that triggerd the event to store that value in the state 'formFields' 
-    setp 9- make the value of the a particular field 'value' tag, value of that particular field from the state 'formFields'. this will make the value of that input equal to the value of the state
-*/
+
+import { UserContext } from '../../contexts/user.context';
+
+import './sign-in-form.styles.scss';
+
+
 const defaultFormFields = 
 {
     email: '',
@@ -25,6 +19,8 @@ const SignInForm = () => {
 
     const [formFields, setFormFields] = useState(defaultFormFields);
     const { email, password } = formFields; 
+
+    const {setCurrentUser} = useContext(UserContext);   //pulling current user setter function from the context provider value
 
     const resetFormFields = () => {
         setFormFields(defaultFormFields);
@@ -40,8 +36,8 @@ const SignInForm = () => {
         
         //retrieve user from firestore
         try{
-            const response = await signInAuthWithEmailAndPassword(email, password);
-            console.log(response)
+            const { user } = await signInAuthWithEmailAndPassword(email, password);
+            setCurrentUser(user);
             resetFormFields();
         }
         catch(error){
