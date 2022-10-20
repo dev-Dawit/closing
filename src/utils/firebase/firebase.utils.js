@@ -1,5 +1,13 @@
 import {initializeApp} from 'firebase/app';
-import {getAuth, signInWithRedirect, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, GoogleAuthProvider, signOut} from 'firebase/auth';
+import {getAuth, 
+        signInWithRedirect, 
+        signInWithPopup, 
+        createUserWithEmailAndPassword, 
+        signInWithEmailAndPassword, 
+        GoogleAuthProvider, 
+        signOut,
+        onAuthStateChanged
+        } from 'firebase/auth';
 import {getFirestore, doc, getDoc, setDoc} from 'firebase/firestore';   //'doc' is used get a documet from a collection, 'getDoc' and 'setDoc' is used to access and set the data on the document
 
 
@@ -40,7 +48,7 @@ export const createUserDocumetFromAuth = async (userAuth, additionalInformation=
     const {displayName, email} = userAuth;         //displayName and email are some of the attributes returned by Auth service together with uid
     const createdAt = new Date();
     try{
-      await setDoc(userDocRef, {displayName, email, createdAt, ...additionalInformation});
+      await setDoc(userDocRef, {displayName, email, createdAt, ...additionalInformation});   //if displayName is null, value from additionalInformation will overwrite it
     }
     catch(error) {
       console.log('error creating the user', error.message);
@@ -51,6 +59,7 @@ export const createUserDocumetFromAuth = async (userAuth, additionalInformation=
   return userDocRef;
 }
 
+//helper functions
 export const createAuthUserWithEmailAndPassword = async(email, password) => {
   if(!email || !password) return;
 
@@ -64,3 +73,6 @@ export const signInAuthWithEmailAndPassword = async(email, password) => {
 }
 
 export const signOutUser = async () => await signOut(auth);
+
+export const onAuthStateChangedListner = (callback) => 
+   onAuthStateChanged(auth, callback)    //runs the callback when the authentication state changes
