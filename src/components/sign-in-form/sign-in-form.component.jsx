@@ -2,7 +2,8 @@ import { useState } from 'react';
 
 import {signInWithGooglePopup, createUserDocumetFromAuth, signInAuthWithEmailAndPassword} from '../../utils/firebase/firebase.utils';
 import FormInput from '../form-input/form-input.component';
-import Button from '../button/button.component';
+
+import Button, {BUTTON_TYPE_CLASSES} from '../button/button.component';
 
 
 import './sign-in-form.styles.scss';
@@ -61,7 +62,7 @@ const SignInForm = () => {
         setFormFields({...formFields, [name]: value})      //spreads-in all 'formFields' object properties(key-value pairs) with their state values, and set the value of the input that triggerd the event(the name that matches with the 'name' tag). 
     } 
     return(
-        <div className='sign-up-container'>
+        <div className='sign-in-container'>
             <h2>Already have an account?</h2>
             <span>Sign In with your email and password</span>
             <form onSubmit={handleSubmit}>
@@ -72,7 +73,7 @@ const SignInForm = () => {
                 
                 <div className='buttons-container'>
                     <Button type= 'submit' buttonType=''>SIGN IN</Button>
-                    <Button type='button' buttonType= 'google' onClick={signInWithGoogle}>GOOGLE SIGN IN</Button>
+                    <Button buttonType='google' onClick={signInWithGoogle}>GOOGLE SIGN IN</Button>
                 </div>
                 
             </form>

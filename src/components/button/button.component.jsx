@@ -13,4 +13,4 @@ const Button = ({ children, buttonType, ...otherProps }) => {  //otherProps like
     )
 }
 
-export default Button;
+  export default Button;
