@@ -55,20 +55,15 @@ export const addCollectionAndDocuments = async(collectionKey, objectsToAdd) => {
 
 
 //helper functions are very useful b/c in the frontend world 3rd party codes or APIs( the ways we fetch, create, update) are often modified, when that happens we only need to modify our code only in the helper functions.
-//helper function to fetch data(categories map in this case) from firestore. 
+//helper function to fetch data(categoriesMap in this case) from firestore. 
 export const getCategoriesAndDocuments = async () => {      //its asynchronous function b/c we are making retrival from firebase
   const collectionRef = collection(db, 'categories');     //first we get the collection from our database(we named it db)
   const q = query(collectionRef);
 
   const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((docSnapshot) => docSnapshot.data())    //querySnapshot.docs is an array of documents
   //querySnapshot.docs will give us an array of ind'l document snapshots i.e [hats doc, sneakers doc]
-  const categoryMap = querySnapshot.docs.reduce((accum, docSnapshot) => {     //reduce method itterates through each element(document in this case) and gives back the accumulated object(documents in this case) 
-    const { title, items} = docSnapshot.data();        //gives back title and item object from the each document
-    accum[title.toLowerCase()] = items;               //remember object[key] = value...so we are setting items as the value to the title key 
-    return accum;
-  }, {})   
-
-  return categoryMap;
+  
 }
 
 

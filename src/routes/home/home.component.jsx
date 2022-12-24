@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom'; // tells the specific position where the children routes should appear
+import { Outlet } from 'react-router-dom'; // outlet tells the specific position where the children routes should appear
 
 import Directory from '../../components/directory/directory.component';
 
